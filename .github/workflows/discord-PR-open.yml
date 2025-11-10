@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Send to Discord
         run: |
-          COMMIT_MSG="${{ github.event.message }}"
+          COMMIT_MSG="${{ github.event.pull_request.comment }}"
           REPO_URL="${{ github.server_url }}/${{ github.repository }}"
           
           # Формируем JSON для Discord webhook
