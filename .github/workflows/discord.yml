@@ -12,7 +12,8 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          MESSAGE="${{ github.actor }}: ${{ github.event.pull_request.message }}"
+          MESSAGE="${{ github.actor }}
+          ${{ github.event.pull_request.message }}"
           
           curl -H "Content-Type: application/json" \
                -X POST \
