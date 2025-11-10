@@ -1,10 +1,8 @@
 name: Custom Discord Message
 
 on:
-  push:
-    branches: [main]
   pull_request:
-    types: [opened, closed]
+    types: [opened]
 
 jobs:
   notify-discord:
@@ -22,13 +20,10 @@ jobs:
             "username": "GitHub Bot",
             "avatar_url": "https://github.com/github.png",
             "embeds": [{
-              "title": "🚀 New Push to ${{ github.ref_name }}",
+              "title": "🚀 New Pull Request to ${{ github.ref_name }}",
               "description": "**Repository**: ${{ github.repository }}\n**Branch**: ${{ github.ref_name }}\n**Author**: ${{ github.actor }}\n**Commit**: '"$COMMIT_MSG"'",
               "url": "'"$REPO_URL"'",
               "color": 3066993,
-              "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'",
-              "footer": {
-                "text": "GitHub Actions"
-              }
+              "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
             }]
           }' ${{ secrets.DISCORD_WEBHOOK_URL }}
