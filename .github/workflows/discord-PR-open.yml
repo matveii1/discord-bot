@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Send to Discord
         run: |
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          COMMIT_MSG="${{ github.event.message }}"
           REPO_URL="${{ github.server_url }}/${{ github.repository }}"
           
           # Формируем JSON для Discord webhook
@@ -20,8 +20,8 @@ jobs:
             "username": "GitHub Bot",
             "avatar_url": "https://github.com/github.png",
             "embeds": [{
-              "title": "🚀 New Pull Request to ${{ github.ref_name }}",
-              "description": "**Repository**: ${{ github.repository }}\n**Branch**: ${{ github.ref_name }}\n**Author**: ${{ github.actor }}\n**Commit**: '"$COMMIT_MSG"'",
+              "title": "🚀 New Pull Request",
+              "description": "**Author**: ${{ github.actor }}\n'"$COMMIT_MSG"'",
               "url": "'"$REPO_URL"'",
               "color": 3066993,
               "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
