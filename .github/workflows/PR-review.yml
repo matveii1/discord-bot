@@ -1,1 +1,23 @@
+name: PR review
 
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  approved:
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR Approved
+        run: |
+          echo "🎉 PR was approved by ${{ github.event.review.user.login }}"
+
+  changes_requested:
+    if: github.event.review.state == 'changes_requested'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Changes Requested
+        run: |
+          echo "🔧 Changes requested by ${{ github.event.review.user.login }}"
+          echo "Review body: ${{ github.event.review.body }}"
