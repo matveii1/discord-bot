@@ -15,12 +15,47 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const { data: currentLabels } = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            const hasChangeLabel = currentLabels.some(label => label.name === 'Change');
+            const hasConflictLabel = currentLabels.some(label => label.name === 'Conflict');
+            const hasApprovedLabel = currentLabels.some(label => label.name === 'Approved');
+            
+            if (hasChangeLabel) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: 'Change'
+              });
+            }
+            if (hasConflictLabel) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: 'Conflict'
+              });
+            }
+            if (hasApprovedLabel) {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: 'Approved'
+              });
+            }
+            
             await github.rest.issues.addLabels({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
               labels: ['check']
-            })
+            });
       - name: Send to Discord
         run: |
           sudo apt-get install -y jq
@@ -42,10 +77,6 @@ jobs:
                 timestamp: $timestamp,
                 fields: [
                   {
-                    "name": "📝 Title",
-                    "value": $pr_title
-                  },
-                  {
                     "name": "👤 Author", 
                     "value": $ARGS.named["author"],
                     "inline": true
@@ -54,6 +85,10 @@ jobs:
                     "name": "🌿 Branch",
                     "value": $ARGS.named["branch"], 
                     "inline": true
+                  },
+                  {
+                    "name": "📝 Title",
+                    "value": $pr_title
                   },
                   {
                     "name": "📋 Description",
