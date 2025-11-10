@@ -28,29 +28,44 @@ jobs:
           JSON_PAYLOAD=$(jq -n \
             --arg username "GitHub Bot" \
             --arg avatar_url "https://github.com/github.png" \
-            --arg title "🚀 New Pull Request" \
-            --arg description "**Author**: ${{ github.actor }}\n**${{ github.event.pull_request.title }}**\n${{ github.event.pull_request.body }}" \
-            --arg url "${{ github.event.pull_request.html_url }}" \
+            --arg pr_title "${{ github.event.pull_request.title }}" \
+            --arg pr_url "${{ github.event.pull_request.html_url }}" \
             --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --arg pr_body "${{ github.event.pull_request.body }}" \
             '{
               username: $username,
               avatar_url: $avatar_url,
               embeds: [{
-                title: $title,
-                description: $description,
-                url: $url,
+                title: "🚀 New Pull Request",
+                url: $pr_url,
                 color: 3066993,
-                timestamp: $timestamp
+                timestamp: $timestamp,
+                fields: [
+                  {
+                    "name": "📝 Title",
+                    "value": $pr_title
+                  },
+                  {
+                    "name": "👤 Author", 
+                    "value": $ARGS.named["author"],
+                    "inline": true
+                  },
+                  {
+                    "name": "🌿 Branch",
+                    "value": $ARGS.named["branch"], 
+                    "inline": true
+                  },
+                  {
+                    "name": "📋 Description",
+                    "value": (if ($pr_body | length) > 0 then $pr_body else "No description provided" end)
+                  }
+                ]
               }]
-            }')
+            }' \
+            --arg author "${{ github.actor }}" \
+            --arg branch "${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}")
           
           curl -H "Content-Type: application/json" \
           -X POST \
           -d "$JSON_PAYLOAD" \
           ${{ secrets.DISCORD_WEBHOOK_URL }}
-      - name: Debug info
-        run: |
-          echo "Actor: ${{ github.actor }}"
-          echo "PR Title: ${{ github.event.pull_request.title }}"
-          echo "PR URL: ${{ github.event.pull_request.html_url }}"
-          echo "Webhook URL present: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}"
