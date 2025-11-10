@@ -10,14 +10,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PR Approved
-        run: |
-          echo "🎉 PR was approved by ${{ github.event.review.user.login }}"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: 'Check'
+            });
+              
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['Approved']
+            });
 
   changes_requested:
     if: github.event.review.state == 'changes_requested'
     runs-on: ubuntu-latest
     steps:
       - name: Changes Requested
-        run: |
-          echo "🔧 Changes requested by ${{ github.event.review.user.login }}"
-          echo "Review body: ${{ github.event.review.body }}"
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                name: 'Check'
+            });
+              
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['Change']
+            });
