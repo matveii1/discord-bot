@@ -30,7 +30,7 @@ jobs:
                     "inline": true
                   },
                   {
-                    "name": "ID",
+                    "name": "SHA",
                     "value": "${{ github.sha }}", 
                     "inline": true
                   }
