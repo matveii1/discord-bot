@@ -31,7 +31,7 @@ jobs:
                   },
                   {
                     "name": "ID",
-                    "value": ${{ github.sha }}, 
+                    "value": "${{ github.sha }}", 
                     "inline": true
                   }
                 ]
