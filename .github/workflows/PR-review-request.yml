@@ -6,7 +6,7 @@ on:
 jobs:
   specific_review_requested:
     runs-on: ubuntu-latest
-    if: ${{ github.event.requested_team.name == 'matveii1'}}
+    if: ${{ github.event.requested_team.name == 'matveii1' || github.event.requested_team.name == 'MrAlgoriZ'}}
     permissions:
       issues: write
       pull-requests: write
