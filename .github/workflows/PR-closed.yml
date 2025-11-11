@@ -10,11 +10,93 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-    - run: |
-        echo The PR was merged
+    - name: Send to discord
+      run: |
+          sudo apt-get install -y jq
+          
+          JSON_PAYLOAD=$(jq -n \
+            --arg username "GitHub Bot" \
+            --arg avatar_url "https://github.com/github.png" \
+            --arg pr_title "${{ github.event.pull_request.title }}" \
+            --arg pr_url "${{ github.event.pull_request.html_url }}" \
+            --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{
+              username: $username,
+              avatar_url: $avatar_url,
+              embeds: [{
+                title: "🔗 Pull Request Merged",
+                url: $pr_url,
+                color: 10181046,
+                timestamp: $timestamp,
+                fields: [
+                  {
+                    "name": "👤 Author", 
+                    "value": $ARGS.named["author"],
+                    "inline": true
+                  },
+                  {
+                    "name": "🌿 Branch",
+                    "value": $ARGS.named["branch"], 
+                    "inline": true
+                  },
+                  {
+                    "name": "📝 Title",
+                    "value": $pr_title
+                  }
+                ]
+              }]
+            }' \
+            --arg author "${{ github.actor }}" \
+            --arg branch "${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}")
+          
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "$JSON_PAYLOAD" \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
   else:
     if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     steps:
-    - run: |
-        echo The PR was merged
+    - name: Send to discord
+      run: |
+          sudo apt-get install -y jq
+          
+          JSON_PAYLOAD=$(jq -n \
+            --arg username "GitHub Bot" \
+            --arg avatar_url "https://github.com/github.png" \
+            --arg pr_title "${{ github.event.pull_request.title }}" \
+            --arg pr_url "${{ github.event.pull_request.html_url }}" \
+            --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{
+              username: $username,
+              avatar_url: $avatar_url,
+              embeds: [{
+                title: "❌ Pull Request Closed",
+                url: $pr_url,
+                color: 15158332,
+                timestamp: $timestamp,
+                fields: [
+                  {
+                    "name": "👤 Author", 
+                    "value": $ARGS.named["author"],
+                    "inline": true
+                  },
+                  {
+                    "name": "🌿 Branch",
+                    "value": $ARGS.named["branch"], 
+                    "inline": true
+                  },
+                  {
+                    "name": "📝 Title",
+                    "value": $pr_title
+                  }
+                ]
+              }]
+            }' \
+            --arg author "${{ github.actor }}" \
+            --arg branch "${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}")
+          
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "$JSON_PAYLOAD" \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
