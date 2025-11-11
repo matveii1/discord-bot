@@ -4,3 +4,43 @@ on:
     branches:
       - 'main'
 
+jobs:
+  push-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send to Discord
+        run: |
+          sudo apt-get install -y jq
+          
+          JSON_PAYLOAD=$(jq -n \
+            --arg username "GitHub Bot" \
+            --arg avatar_url "https://github.com/github.png" \
+            --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            '{
+              username: $username,
+              avatar_url: $avatar_url,
+              embeds: [{
+                title: "Commit",
+                color: 9807270,
+                timestamp: $timestamp,
+                fields: [
+                  {
+                    "name": "Author", 
+                    "value": $ARGS.named["author"],
+                    "inline": true
+                  },
+                  {
+                    "name": "ID",
+                    "value": ${{ github.sha }}, 
+                    "inline": true
+                  }
+                ]
+              }]
+            }' \
+            --arg author "${{ github.actor }}" \
+            --arg branch "${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}")
+          
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "$JSON_PAYLOAD" \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
