@@ -22,8 +22,6 @@ async def gift_roles_on_raw_reaction_add(payload):
                 role = guild.get_role(GIFT_ROLES_EMOJI[emoji])
 
                 await member.add_roles(role)
-        
-        print(f"test")
 
 async def gift_roles_on_raw_reaction_remove(payload):
     if payload.channel_id == GIFT_ROLES_CHANNEL_ID:
@@ -37,5 +35,3 @@ async def gift_roles_on_raw_reaction_remove(payload):
                 role = guild.get_role(GIFT_ROLES_EMOJI[emoji])
 
                 await member.remove_roles(role)
-
-        print(f"test 2")
