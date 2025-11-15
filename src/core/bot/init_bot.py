@@ -1,16 +1,8 @@
-import client
+from bot import bot
 from dotenv import load_dotenv
 from os import getenv
-from src.core.logging.init_logs import log_handler
-import discord
-
-intents = discord.Intents.default()
-intents.members = True
-intents.message_content = True
-
-bot = commands.Bot(command_prefix='?', intents=intents)
+import bot_events, bot_commands
 
 load_dotenv()
 
-client = client.Bot()
-client.run(getenv("DISCORD_TOKEN"), log_handler=log_handler)
+bot.run(getenv("DISCORD_TOKEN"))
