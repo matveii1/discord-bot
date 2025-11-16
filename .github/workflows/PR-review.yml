@@ -33,6 +33,9 @@ jobs:
   changes_requested:
     if: github.event.review.state == 'changes_requested'
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
       - name: Changes Requested
         uses: actions/github-script@v7
