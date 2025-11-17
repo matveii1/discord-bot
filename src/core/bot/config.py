@@ -1,4 +1,9 @@
-GIFT_ROLES_CHANNEL_ID = 1439250458555191518
-GIFT_ROLES_EMOJI = {'🐲': 1409500760806264953,
-                    '👦🏿': 1412457969429516472,
-                    '😺': 1439321096565428514}
+from dotenv import load_dotenv
+from os import getenv
+
+load_dotenv()
+
+GIFT_ROLES_CHANNEL_ID = int(getenv("GIFT_ROLES_CHANNEL_ID"))
+GIFT_ROLES_EMOJI = {'🐲': int(getenv("GIFT_ROLES_EMOJI_1")),
+                    '👦🏿': int(getenv("GIFT_ROLES_EMOJI_2")),
+                    '😺': int(getenv("GIFT_ROLES_EMOJI_3"))}
